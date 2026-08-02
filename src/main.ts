@@ -1,14 +1,15 @@
 import './style.css';
 
-// Importación de componentes
+// Importación de componentes funcionales
 import { createAssetCardElement } from './components/AssetCard';
 import { createTransactionItemElement } from './components/TransactionItem';
 import { createPortfolioSummaryElement } from './components/PortfolioSummary';
 import { createPositionCardElement } from './components/PositionCard';
 
-// Importación de servicios
+// Importación de servicios y tipos
 import { fetchAssets, fetchPortfolio, fetchTransactions, addTransaction } from './services/portfolio.service';
 import { TransactionType } from './models';
+import type { Transaction } from './models';
 
 function showLoadingState(): void {
   const portfolioContainer = document.getElementById("portfolio-summary");
@@ -39,13 +40,13 @@ async function loadAndRenderApp(): Promise<void> {
       fetchTransactions()
     ]);
 
-    // 1. Resumen
+    // 1. Resumen del Portafolio
     const portfolioContainer = document.getElementById("portfolio-summary");
     if (portfolioContainer) {
       portfolioContainer.replaceChildren(createPortfolioSummaryElement(portfolio));
     }
 
-    // 2. Renderizar Posiciones Activas del Inversionista
+    // 2. Posiciones Activas
     const positionsContainer = document.getElementById("positions-list");
     if (positionsContainer) {
       positionsContainer.replaceChildren();
@@ -60,7 +61,7 @@ async function loadAndRenderApp(): Promise<void> {
       }
     }
 
-    // 3. Activos Mercado
+    // 3. Activos del Mercado
     const assetsContainer = document.getElementById("assets-list");
     if (assetsContainer) {
       assetsContainer.replaceChildren();
@@ -69,21 +70,39 @@ async function loadAndRenderApp(): Promise<void> {
       });
     }
 
-    // 4. Transacciones
+    // 4. Historial de Transacciones
     renderTransactions(transactions);
 
   } catch (error) {
-    console.error("Error al obtener datos:", error);
+    console.error("Error al obtener datos del servidor:", error);
+    showErrorMessage("Ocurrió un error al cargar los datos del sistema de inversiones.");
   }
 }
 
-function renderTransactions(transactions: any[]): void {
+// Tipado estricto con Transaction[] (eliminado el uso de any)
+function renderTransactions(transactions: Transaction[]): void {
   const transactionsContainer = document.getElementById("transactions-list");
   if (transactionsContainer) {
     transactionsContainer.replaceChildren();
-    transactions.forEach((tx) => {
-      transactionsContainer.appendChild(createTransactionItemElement(tx));
-    });
+    if (transactions.length === 0) {
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "Sin transacciones registradas.";
+      transactionsContainer.appendChild(emptyText);
+    } else {
+      transactions.forEach((tx) => {
+        transactionsContainer.appendChild(createTransactionItemElement(tx));
+      });
+    }
+  }
+}
+
+function showErrorMessage(message: string): void {
+  const portfolioContainer = document.getElementById("portfolio-summary");
+  if (portfolioContainer) {
+    const errorText = document.createElement("p");
+    errorText.textContent = message;
+    errorText.className = "error-message";
+    portfolioContainer.replaceChildren(errorText);
   }
 }
 
@@ -95,13 +114,14 @@ function setupTransactionForm(): void {
   if (!form) return;
 
   form.addEventListener("submit", async (event: SubmitEvent) => {
-    event.preventDefault(); // Neutraliza la recarga del navegador[cite: 5]
+    event.preventDefault(); // Detiene la recarga nativa de la página
 
     if (errorDiv) {
       errorDiv.style.display = "none";
       errorDiv.textContent = "";
     }
 
+    // Aserciones de tipo especializadas
     const assetSelect = document.getElementById("asset-select") as HTMLSelectElement;
     const typeSelect = document.getElementById("type-select") as HTMLSelectElement;
     const quantityInput = document.getElementById("quantity-input") as HTMLInputElement;
@@ -112,7 +132,7 @@ function setupTransactionForm(): void {
     const quantity = Number(quantityInput.value);
     const unitPrice = Number(priceInput.value);
 
-    // Validaciones
+    // Validaciones estrictas de presencia y rango
     if (!assetId) {
       showFormError("Por favor seleccione un activo financiero válido.");
       return;

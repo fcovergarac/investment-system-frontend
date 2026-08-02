@@ -1,26 +1,26 @@
 import { AssetType, Currency, TransactionType } from "../models";
 import type { Asset, Portfolio, Transaction } from "../models";
 
-// --- MOCK DATA SIMULADA PARA RED ---
+// Base de Datos en Memoria para simulación de servidor
 const MOCK_PORTFOLIO: Portfolio = {
   id: "p1",
   name: "Portafolio Principal Crecimiento",
   ownerName: "Inversionista",
-  totalValue: 918550, // Suma exacta de las posiciones activas
+  totalValue: 918550,
   positions: [
     {
       assetId: "a1",
       ticker: "AAPL",
       quantity: 10,
       averageBuyPrice: 170.00,
-      currentValue: 1855.00 // 10 acciones x $185.50
+      currentValue: 1855.00
     },
     {
       assetId: "a2",
       ticker: "SQM-B",
       quantity: 20,
       averageBuyPrice: 42000.00,
-      currentValue: 916695.00 // 20 acciones x $45.834.75
+      currentValue: 916695.00
     }
   ]
 };
@@ -57,39 +57,44 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   }
 ];
 
-// --- FUNCIONES ASÍNCRONAS CONCEPTUALES ---
-
 /**
- * Simula la petición HTTP GET para obtener la información del portafolio.
+ * Función auxiliar que simula una respuesta del navegador via Fetch
+ * cumpliendo las dos fases: verificación de canal (ok) y desempaquetado .json()
  */
+async function simulateFetch<T>(data: T, delayMs = 400): Promise<T> {
+  await new Promise((resolve) => setTimeout(resolve, delayMs));
+  
+  // Simulamos un objeto Response HTTP
+  const fakeResponse = new Response(JSON.stringify(data), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!fakeResponse.ok) {
+    throw new Error(`HTTP Error Status: ${fakeResponse.status}`);
+  }
+
+  const jsonResult: T = await fakeResponse.json();
+  return jsonResult;
+}
+
+// --- SERVICIOS ASÍNCRONOS CON TIPADO ESTRICTO ---
+
 export async function fetchPortfolio(): Promise<Portfolio> {
-  // Simula latencia de red de 500ms
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return MOCK_PORTFOLIO;
+  return await simulateFetch<Portfolio>(MOCK_PORTFOLIO);
 }
 
-/**
- * Simula la petición HTTP GET para obtener el catálogo de activos financieros.
- */
 export async function fetchAssets(): Promise<Asset[]> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return MOCK_ASSETS;
+  return await simulateFetch<Asset[]>(MOCK_ASSETS);
 }
 
-/**
- * Simula la petición HTTP GET para obtener el historial de transacciones.
- */
 export async function fetchTransactions(): Promise<Transaction[]> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return MOCK_TRANSACTIONS;
+  return await simulateFetch<Transaction[]>(MOCK_TRANSACTIONS);
 }
 
-/**
- * Simula la petición HTTP POST para registrar una nueva transacción.
- */
-export async function addTransaction(newTx: Omit<Transaction, "id" | "portfolioId" | "timestamp">): Promise<Transaction> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-
+export async function addTransaction(
+  newTx: Omit<Transaction, "id" | "portfolioId" | "timestamp">
+): Promise<Transaction> {
   const createdTransaction: Transaction = {
     ...newTx,
     id: `t${Date.now()}`,
@@ -97,6 +102,6 @@ export async function addTransaction(newTx: Omit<Transaction, "id" | "portfolioI
     timestamp: new Date()
   };
 
-  MOCK_TRANSACTIONS.unshift(createdTransaction); // Agrega al inicio de la lista
-  return createdTransaction;
+  MOCK_TRANSACTIONS.unshift(createdTransaction);
+  return await simulateFetch<Transaction>(createdTransaction);
 }
