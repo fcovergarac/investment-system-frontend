@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" style="background-color: #1a1a1a; color-scheme: dark;">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Investment System</title>
+    <!-- Estilo crítico inline para evitar el chispazo blanco -->
+    <style>
+      html, body {
+        background-color: #1a1a1a;
+        color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      }
+    </style>
   </head>
   <body>
     <div id="app">
@@ -12,16 +22,70 @@
       </header>
 
       <main class="main-container">
-        <!-- Sección de resumen del Portafolio -->
+        <!-- Resumen del Portafolio -->
         <section id="portfolio-summary" class="summary-card"></section>
 
-        <!-- Sección de Activos Financieros -->
+        <!-- Resumen del Portafolio -->
+        <section id="portfolio-summary" class="summary-card"></section>
+
+        <!-- Nueva Sección: Posiciones en Cartera -->
+        <section class="section">
+          <h2>Mis Posiciones en Cartera</h2>
+          <div id="positions-list" class="grid-container"></div>
+        </section>
+
+        <!-- Activos Disponibles en el Mercado -->
+        <section class="section">
+          <h2>Catálogo de Activos Mercado</h2>
+          <div id="assets-list" class="grid-container"></div>
+        </section>
+
+        <!-- Activos Financieros -->
         <section class="section">
           <h2>Activos Disponibles</h2>
           <div id="assets-list" class="grid-container"></div>
         </section>
 
-        <!-- Sección de Transacciones -->
+        <!-- Formulario para Registrar Nueva Transacción -->
+        <section class="section">
+          <h2>Registrar Operación Financial</h2>
+          <form id="transaction-form" class="form-card">
+            <div class="form-group">
+              <label for="asset-select">Activo Financiero</label>
+              <select id="asset-select" name="assetId" required class="form-input">
+                <option value="">-- Seleccionar Activo --</option>
+                <option value="a1">AAPL - Apple Inc.</option>
+                <option value="a2">SQM-B - Sociedad Química y Minera</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type-select">Tipo de Operación</label>
+              <select id="type-select" name="type" required class="form-input">
+                <option value="BUY">BUY (Compra)</option>
+                <option value="SELL">SELL (Venta)</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quantity-input">Cantidad</label>
+                <input type="number" id="quantity-input" name="quantity" min="1" step="1" placeholder="Ej: 10" required class="form-input" />
+              </div>
+
+              <div class="form-group">
+                <label for="price-input">Precio Unitario ($)</label>
+                <input type="number" id="price-input" name="unitPrice" min="0.01" step="0.01" placeholder="Ej: 185.50" required class="form-input" />
+              </div>
+            </div>
+
+            <div id="form-error" class="error-message" style="display: none;"></div>
+
+            <button type="submit" class="btn-submit">Ejecutar Transacción</button>
+          </form>
+        </section>
+
+        <!-- Transacciones -->
         <section class="section">
           <h2>Historial de Transacciones</h2>
           <div id="transactions-list" class="list-container"></div>
