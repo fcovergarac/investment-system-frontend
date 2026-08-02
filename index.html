@@ -1,13 +1,34 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>typescript-investment-system-frontend</title>
+    <title>Investment System</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <header class="header">
+        <h1>System Investment Dashboard</h1>
+      </header>
+
+      <main class="main-container">
+        <!-- Sección de resumen del Portafolio -->
+        <section id="portfolio-summary" class="summary-card"></section>
+
+        <!-- Sección de Activos Financieros -->
+        <section class="section">
+          <h2>Activos Disponibles</h2>
+          <div id="assets-list" class="grid-container"></div>
+        </section>
+
+        <!-- Sección de Transacciones -->
+        <section class="section">
+          <h2>Historial de Transacciones</h2>
+          <div id="transactions-list" class="list-container"></div>
+        </section>
+      </main>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

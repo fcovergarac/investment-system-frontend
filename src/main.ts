@@ -1,76 +1,91 @@
-import { Asset, AssetType, Portfolio } from './models/investment.model';
+import './style.css';
+import { AssetType, Currency, TransactionType } from './models';
+import type { Asset, Transaction, Portfolio } from './models';
 
-// Instance dataset simulated (Mock data)
+// Importación de componentes funcionales visuales
+import { createAssetCardHtml } from './components/AssetCard';
+import { createTransactionItemHtml } from './components/TransactionItem';
+import { createPortfolioSummaryHtml } from './components/PortfolioSummary';
+
 const mockAssets: Asset[] = [
   {
-    id: 'asset-001',
-    symbol: 'AAPL',
+    id: 'a1',
+    ticker: 'AAPL',
     name: 'Apple Inc.',
     type: AssetType.STOCK,
-    quantity: 10,
-    purchasePrice: 150.00,
-    currentPrice: 175.50
+    currentPrice: 185.50,
+    currency: Currency.USD,
   },
   {
-    id: 'asset-002',
-    symbol: 'BTC',
-    name: 'Bitcoin',
-    type: AssetType.CRYPTO,
-    quantity: 0.5,
-    purchasePrice: 60000.00,
-    currentPrice: 65000.00    
+    id: 'a2',
+    ticker: 'SQM-B',
+    name: 'Sociedad Química y Minera de Chile S.A.',
+    type: AssetType.STOCK,
+    currentPrice: 45000,
+    currency: Currency.CLP,
   }
 ];
 
 const mockPortfolio: Portfolio = {
-  id: 'port-101',
-  ownerName: 'Francisco Javier',
-  assets: mockAssets
+  id: 'p1',
+  name: 'My Investment Portfolio',
+  ownerName: 'John Doe',
+  totalValue: 100000,
+  positions: [
+    {
+      assetId: 'a1',
+      ticker: 'AAPL',
+      quantity: 10,
+      averageBuyPrice: 170.00,
+      currentValue: 1855.00,
+    }
+  ]
 };
 
+const mockTransactions: Transaction[] = [
+  {
+    id: 't1',
+    portfolioId: 'p1',
+    assetId: 'a1',
+    type: TransactionType.BUY,
+    quantity: 10,
+    unitPrice: 170.00,
+    totalAmount: 1700.00,
+    timestamp: new Date("2026-01-15")
+  }
+];
 
-// 2. Selección segura del contenedor principal del DOM (#app)
-const appContainer = document.getElementById('app');
 
-// 3. Renderizado directo en pantalla
-if (appContainer !== null) {
-  appContainer.innerHTML = `
-    <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); background-color: #ffffff; color: #1e293b;">
-      <h1 style="color: #0f172a; margin-top: 0; font-size: 1.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-        💼 Investment Portfolio
-      </h1>
-      
-      <p style="font-size: 1.1rem; color: #475569;">
-        <strong>Owner:</strong> ${mockPortfolio.ownerName}
-      </p>
-      
-      <p style="font-size: 0.95rem; color: #64748b;">
-        <strong>Total Registered Assets:</strong> ${mockPortfolio.assets.length}
-      </p>
+// --- RENDERIZADO SEGURO DEL DOM ---
+function renderApp(): void {
+  // 1. Captura y renderizado del resumen del portafolio
+  const portfolioContainer = document.getElementById("portfolio-summary") as HTMLElement | null;
+  if (portfolioContainer) {
+    portfolioContainer.innerHTML = createPortfolioSummaryHtml(mockPortfolio);
+  } else {
+    console.warn("No se encontró el contenedor #portfolio-summary");
+  }
 
-      <h2 style="font-size: 1.25rem; color: #334155; margin-top: 24px;">Asset List</h2>
+  // 2. Captura y renderizado de la lista de activos
+  const assetsContainer = document.getElementById("assets-list") as HTMLElement | null;
+  if (assetsContainer) {
+    assetsContainer.innerHTML = mockAssets
+      .map(asset => createAssetCardHtml(asset))
+      .join("");
+  } else {
+    console.warn("No se encontró el contenedor #assets-list");
+  }
 
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        ${mockPortfolio.assets.map(asset => `
-          <div style="padding: 12px 16px; border-left: 4px solid ${
-            asset.type === AssetType.STOCK ? '#3b82f6' : 
-            asset.type === AssetType.CRYPTO ? '#f59e0b' : '#10b981'
-          }; background-color: #f8fafc; border-radius: 0 8px 8px 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <strong>${asset.symbol} - ${asset.name}</strong>
-              <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; background-color: #e2e8f0; font-weight: bold;">
-                ${asset.type}
-              </span>
-            </div>
-            <div style="margin-top: 6px; font-size: 0.9rem; color: #475569;">
-              Quantity: <strong>${asset.quantity}</strong> | 
-              Current Price: <strong>$${asset.currentPrice.toLocaleString('en-US')}</strong>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-} else {
-  console.error("Error Crítico: No se encontró el contenedor con ID 'app' en el index.html.");
+  // 3. Captura y renderizado de las transacciones
+  const transactionsContainer = document.getElementById("transactions-list") as HTMLElement | null;
+  if (transactionsContainer) {
+    transactionsContainer.innerHTML = mockTransactions
+      .map(tx => createTransactionItemHtml(tx))
+      .join("");
+  } else {
+    console.warn("No se encontró el contenedor #transactions-list");
+  }
 }
+
+// Inicializamos la aplicación cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", renderApp);
