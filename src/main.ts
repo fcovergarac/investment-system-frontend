@@ -2,51 +2,52 @@ import './style.css';
 import { AssetType, Currency, TransactionType } from './models';
 import type { Asset, Transaction, Portfolio } from './models';
 
-// Importación de componentes funcionales visuales
-import { createAssetCardHtml } from './components/AssetCard';
-import { createTransactionItemHtml } from './components/TransactionItem';
-import { createPortfolioSummaryHtml } from './components/PortfolioSummary';
+// Importamos las nuevas funciones generadoras de elementos DOM
+import { createAssetCardElement } from './components/AssetCard';
+import { createTransactionItemElement } from './components/TransactionItem';
+import { createPortfolioSummaryElement } from './components/PortfolioSummary';
 
+// --- MOCK DATA ---
 const mockAssets: Asset[] = [
   {
-    id: 'a1',
-    ticker: 'AAPL',
-    name: 'Apple Inc.',
+    id: "a1",
+    ticker: "AAPL",
+    name: "Apple Inc.",
     type: AssetType.STOCK,
     currentPrice: 185.50,
-    currency: Currency.USD,
+    currency: Currency.USD
   },
   {
-    id: 'a2',
-    ticker: 'SQM-B',
-    name: 'Sociedad Química y Minera de Chile S.A.',
+    id: "a2",
+    ticker: "SQM-B",
+    name: "Sociedad Química y Minera de Chile",
     type: AssetType.STOCK,
     currentPrice: 45000,
-    currency: Currency.CLP,
+    currency: Currency.CLP
   }
 ];
 
 const mockPortfolio: Portfolio = {
-  id: 'p1',
-  name: 'My Investment Portfolio',
-  ownerName: 'John Doe',
-  totalValue: 100000,
+  id: "p1",
+  name: "Portafolio Principal Crecimiento",
+  ownerName: "Inversionista",
+  totalValue: 1250000,
   positions: [
     {
-      assetId: 'a1',
-      ticker: 'AAPL',
+      assetId: "a1",
+      ticker: "AAPL",
       quantity: 10,
       averageBuyPrice: 170.00,
-      currentValue: 1855.00,
+      currentValue: 1855.00
     }
   ]
 };
 
 const mockTransactions: Transaction[] = [
   {
-    id: 't1',
-    portfolioId: 'p1',
-    assetId: 'a1',
+    id: "t1",
+    portfolioId: "p1",
+    assetId: "a1",
     type: TransactionType.BUY,
     quantity: 10,
     unitPrice: 170.00,
@@ -55,37 +56,34 @@ const mockTransactions: Transaction[] = [
   }
 ];
 
-
-// --- RENDERIZADO SEGURO DEL DOM ---
+// --- RENDERIZADO SEGURO DEL DOM MEDIANTE NODOS ---
 function renderApp(): void {
-  // 1. Captura y renderizado del resumen del portafolio
-  const portfolioContainer = document.getElementById("portfolio-summary") as HTMLElement | null;
+  // 1. Resumen del portafolio
+  const portfolioContainer = document.getElementById("portfolio-summary");
   if (portfolioContainer) {
-    portfolioContainer.innerHTML = createPortfolioSummaryHtml(mockPortfolio);
-  } else {
-    console.warn("No se encontró el contenedor #portfolio-summary");
+    const summaryNode = createPortfolioSummaryElement(mockPortfolio);
+    portfolioContainer.replaceChildren(summaryNode); // Reemplaza nodos hijos de forma eficiente y segura
   }
 
-  // 2. Captura y renderizado de la lista de activos
-  const assetsContainer = document.getElementById("assets-list") as HTMLElement | null;
+  // 2. Lista de activos
+  const assetsContainer = document.getElementById("assets-list");
   if (assetsContainer) {
-    assetsContainer.innerHTML = mockAssets
-      .map(asset => createAssetCardHtml(asset))
-      .join("");
-  } else {
-    console.warn("No se encontró el contenedor #assets-list");
+    assetsContainer.replaceChildren(); // Limpia el contenedor
+    mockAssets.forEach(asset => {
+      const cardNode = createAssetCardElement(asset);
+      assetsContainer.appendChild(cardNode); // Inyecta el nodo DOM directo
+    });
   }
 
-  // 3. Captura y renderizado de las transacciones
-  const transactionsContainer = document.getElementById("transactions-list") as HTMLElement | null;
+  // 3. Lista de transacciones
+  const transactionsContainer = document.getElementById("transactions-list");
   if (transactionsContainer) {
-    transactionsContainer.innerHTML = mockTransactions
-      .map(tx => createTransactionItemHtml(tx))
-      .join("");
-  } else {
-    console.warn("No se encontró el contenedor #transactions-list");
+    transactionsContainer.replaceChildren(); // Limpia el contenedor
+    mockTransactions.forEach(tx => {
+      const txNode = createTransactionItemElement(tx);
+      transactionsContainer.appendChild(txNode);
+    });
   }
 }
 
-// Inicializamos la aplicación cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", renderApp);
