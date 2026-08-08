@@ -1,0 +1,43 @@
+{
+  "id": "p1",
+  "name": "Portafolio Principal Crecimiento",
+  "ownerName": "Inversionista",
+  "totalValue": 2548550,
+  "positions": [
+    {
+      "assetId": "a1",
+      "ticker": "AAPL",
+      "quantity": 10,
+      "averageBuyPrice": 170.00,
+      "currentValue": 1855.00
+    },
+    {
+      "assetId": "a2",
+      "ticker": "SQM-B",
+      "quantity": 20,
+      "averageBuyPrice": 42000.00,
+      "currentValue": 900000.00
+    },
+    {
+      "assetId": "a3",
+      "ticker": "NVDA",
+      "quantity": 5,
+      "averageBuyPrice": 110.00,
+      "currentValue": 600.00
+    },
+    {
+      "assetId": "a4",
+      "ticker": "MSFT",
+      "quantity": 8,
+      "averageBuyPrice": 400.00,
+      "currentValue": 3360.00
+    },
+    {
+      "assetId": "a5",
+      "ticker": "CMPC",
+      "quantity": 1000,
+      "averageBuyPrice": 1500.00,
+      "currentValue": 1642735.00
+    }
+  ]
+}

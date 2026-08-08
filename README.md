@@ -4,10 +4,10 @@ An interactive wealth management and investment platform built with **Vanilla Ty
 
 ## Technologies Used
 
-- **TypeScript** (Vanilla, strictly typed with zero `any` usage)[cite: 4]
-- **Vite** (Build tool and hot-reloading development server)[cite: 4]
+- **TypeScript** (Vanilla, strictly typed with zero `any` usage)
+- **Vite** (Build tool and hot-reloading development server)
 - **HTML5 & CSS3** (Responsive design with dark mode support)
-- **Native DOM API** (Safe node-based manipulation with explicit null type guards)[cite: 4]
+- **Native DOM API** (Safe node-based manipulation with explicit null type guards)
 
 ## Prerequisites
 
@@ -20,14 +20,14 @@ Ensure you have [Node.js](https://nodejs.org/) installed (version 18 or higher).
    cd investment-system-frontend
 
 2. **Install dependencies:**
-   npm install[cite: 4]
+   npm install
 
 3. **Run the development server:**
-   npm run dev[cite: 4]
+   npm run dev
    Open http://localhost:5173 in your browser.
 
 4. **Type Verification and Build:**
-   npm run build[cite: 4]
+   npm run build
 
 ## Project Structure
 

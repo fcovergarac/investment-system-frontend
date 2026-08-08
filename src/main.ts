@@ -7,25 +7,41 @@ import { createPositionCardElement } from './components/PositionCard';
 
 import { fetchAssets, fetchPortfolio, fetchTransactions, addTransaction } from './services/portfolio.service';
 import { TransactionType } from './models';
-import type { Transaction } from './models';
+import type { Asset, Transaction } from './models';
+
+function renderLoadingState(containerId: string, message: string): void {
+  const container = document.getElementById(containerId);
+  if (container !== null) {
+    const p = document.createElement("p");
+    p.textContent = message;
+    p.className = "loading-text";
+    container.replaceChildren(p);
+  }
+}
 
 function showLoadingState(): void {
-  const portfolioContainer = document.getElementById("portfolio-summary");
-  const positionsContainer = document.getElementById("positions-list");
-  const assetsContainer = document.getElementById("assets-list");
-  const transactionsContainer = document.getElementById("transactions-list");
+  renderLoadingState("portfolio-summary", "Cargando resumen del portafolio...");
+  renderLoadingState("positions-list", "Cargando posiciones en cartera...");
+  renderLoadingState("assets-list", "Cargando activos financieros...");
+  renderLoadingState("transactions-list", "Cargando historial de transacciones...");
+}
 
-  const createSkeleton = (text: string) => {
-    const p = document.createElement("p");
-    p.textContent = text;
-    p.className = "loading-text";
-    return p;
-  };
+function populateAssetSelect(assets: Asset[]): void {
+  const selectElement = document.getElementById("asset-select") as HTMLSelectElement | null;
+  if (selectElement === null) return;
 
-  if (portfolioContainer !== null) portfolioContainer.replaceChildren(createSkeleton("Cargando resumen del portafolio..."));
-  if (positionsContainer !== null) positionsContainer.replaceChildren(createSkeleton("Cargando posiciones en cartera..."));
-  if (assetsContainer !== null) assetsContainer.replaceChildren(createSkeleton("Cargando activos financieros..."));
-  if (transactionsContainer !== null) transactionsContainer.replaceChildren(createSkeleton("Cargando historial de transacciones..."));
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "-- Seleccionar Activo --";
+
+  selectElement.replaceChildren(defaultOption);
+
+  assets.forEach((asset) => {
+    const option = document.createElement("option");
+    option.value = asset.id;
+    option.textContent = `${asset.ticker} - ${asset.name}`;
+    selectElement.appendChild(option);
+  });
 }
 
 async function loadAndRenderApp(): Promise<void> {
@@ -38,11 +54,13 @@ async function loadAndRenderApp(): Promise<void> {
       fetchTransactions()
     ]);
 
+    // Renderizar Portafolio
     const portfolioContainer = document.getElementById("portfolio-summary");
     if (portfolioContainer !== null) {
       portfolioContainer.replaceChildren(createPortfolioSummaryElement(portfolio));
     }
 
+    // Renderizar Posiciones
     const positionsContainer = document.getElementById("positions-list");
     if (positionsContainer !== null) {
       positionsContainer.replaceChildren();
@@ -57,6 +75,7 @@ async function loadAndRenderApp(): Promise<void> {
       }
     }
 
+    // Renderizar Activos de Mercado y Poblar Selector
     const assetsContainer = document.getElementById("assets-list");
     if (assetsContainer !== null) {
       assetsContainer.replaceChildren();
@@ -65,6 +84,9 @@ async function loadAndRenderApp(): Promise<void> {
       });
     }
 
+    populateAssetSelect(assets);
+
+    // Renderizar Transacciones
     renderTransactions(transactions);
 
   } catch (error) {
@@ -105,6 +127,8 @@ function setupTransactionForm(): void {
 
   if (form === null) return;
 
+  const submitBtn = form.querySelector("button[type='submit']") as HTMLButtonElement | null;
+
   form.addEventListener("submit", async (event: SubmitEvent) => {
     event.preventDefault();
 
@@ -140,6 +164,9 @@ function setupTransactionForm(): void {
       return;
     }
 
+    // Bloquear botón durante el procesamiento
+    if (submitBtn !== null) submitBtn.disabled = true;
+
     try {
       await addTransaction({
         assetId,
@@ -155,6 +182,8 @@ function setupTransactionForm(): void {
 
     } catch (err) {
       showFormError("Ocurrió un error al registrar la transacción.");
+    } finally {
+      if (submitBtn !== null) submitBtn.disabled = false;
     }
   });
 

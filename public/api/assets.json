@@ -1,0 +1,82 @@
+[
+  {
+    "id": "a1",
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "type": "STOCK",
+    "currentPrice": 185.50,
+    "currency": "USD"
+  },
+  {
+    "id": "a2",
+    "ticker": "SQM-B",
+    "name": "Sociedad Química y Minera de Chile",
+    "type": "STOCK",
+    "currentPrice": 45000.00,
+    "currency": "CLP"
+  },
+  {
+    "id": "a3",
+    "ticker": "NVDA",
+    "name": "NVIDIA Corporation",
+    "type": "STOCK",
+    "currentPrice": 120.00,
+    "currency": "USD"
+  },
+  {
+    "id": "a4",
+    "ticker": "MSFT",
+    "name": "Microsoft Corporation",
+    "type": "STOCK",
+    "currentPrice": 420.00,
+    "currency": "USD"
+  },
+  {
+    "id": "a5",
+    "ticker": "CMPC",
+    "name": "Empresas CMPC S.A.",
+    "type": "STOCK",
+    "currentPrice": 1642.74,
+    "currency": "CLP"
+  },
+  {
+    "id": "a6",
+    "ticker": "TSLA",
+    "name": "Tesla, Inc.",
+    "type": "STOCK",
+    "currentPrice": 220.50,
+    "currency": "USD"
+  },
+  {
+    "id": "a7",
+    "ticker": "AMZN",
+    "name": "Amazon.com, Inc.",
+    "type": "STOCK",
+    "currentPrice": 180.25,
+    "currency": "USD"
+  },
+  {
+    "id": "a8",
+    "ticker": "CHILE",
+    "name": "Banco de Chile",
+    "type": "STOCK",
+    "currentPrice": 112.50,
+    "currency": "CLP"
+  },
+  {
+    "id": "a9",
+    "ticker": "BTC-USD",
+    "name": "Bitcoin USD",
+    "type": "CRYPTO",
+    "currentPrice": 62500.00,
+    "currency": "USD"
+  },
+  {
+    "id": "a10",
+    "ticker": "ETH-USD",
+    "name": "Ethereum USD",
+    "type": "CRYPTO",
+    "currentPrice": 3400.00,
+    "currency": "USD"
+  }
+]
