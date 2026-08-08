@@ -161,3 +161,103 @@ body {
   color: #64b5f6;
   font-weight: bold;
 }
+
+/* --- Header y Logo --- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 30px;
+  background-color: #121212;
+  border-bottom: 1px solid #333;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.brand-logo {
+  height: 85px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  color: #f0f0f0;
+}
+
+/* --- Layout en 2 Columnas --- */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 30px;
+  max-width: 1300px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+}
+
+/* --- Banner Lateral de Edificio --- */
+.side-banner {
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-image-container {
+  position: sticky;
+  top: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #333;
+  background-color: #222;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.corporate-building-img {
+  width: 100%;
+  height: 580px;
+  object-fit: cover;
+  display: block;
+}
+
+.banner-caption {
+  padding: 15px;
+  background-color: #242424;
+  border-top: 1px solid #333;
+  text-align: center;
+}
+
+.banner-caption h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.05rem;
+  color: #e0e0e0;
+}
+
+.banner-caption p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 992px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side-banner {
+    display: none; /* Se oculta en teléfonos/tablets pequeñas */
+  }
+}
