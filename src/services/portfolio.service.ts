@@ -1,7 +1,6 @@
 import { AssetType, Currency, TransactionType } from "../models";
 import type { Asset, Portfolio, Transaction } from "../models";
 
-// Base de Datos en Memoria para simulación de servidor
 const MOCK_PORTFOLIO: Portfolio = {
   id: "p1",
   name: "Portafolio Principal Crecimiento",
@@ -57,39 +56,32 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   }
 ];
 
-/**
- * Función auxiliar que simula una respuesta del navegador via Fetch
- * cumpliendo las dos fases: verificación de canal (ok) y desempaquetado .json()
- */
-async function simulateFetch<T>(data: T, delayMs = 400): Promise<T> {
-  await new Promise((resolve) => setTimeout(resolve, delayMs));
-  
-  // Simulamos un objeto Response HTTP
-  const fakeResponse = new Response(JSON.stringify(data), {
+async function simulateApiCall<T>(data: T, delay = 400): Promise<T> {
+  await new Promise((resolve) => setTimeout(resolve, delay));
+
+  const response = new Response(JSON.stringify(data), {
     status: 200,
     headers: { "Content-Type": "application/json" }
   });
 
-  if (!fakeResponse.ok) {
-    throw new Error(`HTTP Error Status: ${fakeResponse.status}`);
+  if (!response.ok) {
+    throw new Error(`Error del Servidor: Código HTTP ${response.status}`);
   }
 
-  const jsonResult: T = await fakeResponse.json();
-  return jsonResult;
+  const result = (await response.json()) as T;
+  return result;
 }
 
-// --- SERVICIOS ASÍNCRONOS CON TIPADO ESTRICTO ---
-
 export async function fetchPortfolio(): Promise<Portfolio> {
-  return await simulateFetch<Portfolio>(MOCK_PORTFOLIO);
+  return await simulateApiCall<Portfolio>(MOCK_PORTFOLIO);
 }
 
 export async function fetchAssets(): Promise<Asset[]> {
-  return await simulateFetch<Asset[]>(MOCK_ASSETS);
+  return await simulateApiCall<Asset[]>(MOCK_ASSETS);
 }
 
 export async function fetchTransactions(): Promise<Transaction[]> {
-  return await simulateFetch<Transaction[]>(MOCK_TRANSACTIONS);
+  return await simulateApiCall<Transaction[]>(MOCK_TRANSACTIONS);
 }
 
 export async function addTransaction(
@@ -103,5 +95,5 @@ export async function addTransaction(
   };
 
   MOCK_TRANSACTIONS.unshift(createdTransaction);
-  return await simulateFetch<Transaction>(createdTransaction);
+  return await simulateApiCall<Transaction>(createdTransaction);
 }

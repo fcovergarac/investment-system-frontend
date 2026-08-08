@@ -1,12 +1,10 @@
 import './style.css';
 
-// Importación de componentes funcionales
 import { createAssetCardElement } from './components/AssetCard';
 import { createTransactionItemElement } from './components/TransactionItem';
 import { createPortfolioSummaryElement } from './components/PortfolioSummary';
 import { createPositionCardElement } from './components/PositionCard';
 
-// Importación de servicios y tipos
 import { fetchAssets, fetchPortfolio, fetchTransactions, addTransaction } from './services/portfolio.service';
 import { TransactionType } from './models';
 import type { Transaction } from './models';
@@ -24,10 +22,10 @@ function showLoadingState(): void {
     return p;
   };
 
-  if (portfolioContainer) portfolioContainer.replaceChildren(createSkeleton("Cargando resumen del portafolio..."));
-  if (positionsContainer) positionsContainer.replaceChildren(createSkeleton("Cargando posiciones en cartera..."));
-  if (assetsContainer) assetsContainer.replaceChildren(createSkeleton("Cargando activos financieros..."));
-  if (transactionsContainer) transactionsContainer.replaceChildren(createSkeleton("Cargando historial de transacciones..."));
+  if (portfolioContainer !== null) portfolioContainer.replaceChildren(createSkeleton("Cargando resumen del portafolio..."));
+  if (positionsContainer !== null) positionsContainer.replaceChildren(createSkeleton("Cargando posiciones en cartera..."));
+  if (assetsContainer !== null) assetsContainer.replaceChildren(createSkeleton("Cargando activos financieros..."));
+  if (transactionsContainer !== null) transactionsContainer.replaceChildren(createSkeleton("Cargando historial de transacciones..."));
 }
 
 async function loadAndRenderApp(): Promise<void> {
@@ -40,15 +38,13 @@ async function loadAndRenderApp(): Promise<void> {
       fetchTransactions()
     ]);
 
-    // 1. Resumen del Portafolio
     const portfolioContainer = document.getElementById("portfolio-summary");
-    if (portfolioContainer) {
+    if (portfolioContainer !== null) {
       portfolioContainer.replaceChildren(createPortfolioSummaryElement(portfolio));
     }
 
-    // 2. Posiciones Activas
     const positionsContainer = document.getElementById("positions-list");
-    if (positionsContainer) {
+    if (positionsContainer !== null) {
       positionsContainer.replaceChildren();
       if (portfolio.positions.length === 0) {
         const emptyText = document.createElement("p");
@@ -61,16 +57,14 @@ async function loadAndRenderApp(): Promise<void> {
       }
     }
 
-    // 3. Activos del Mercado
     const assetsContainer = document.getElementById("assets-list");
-    if (assetsContainer) {
+    if (assetsContainer !== null) {
       assetsContainer.replaceChildren();
       assets.forEach((asset) => {
         assetsContainer.appendChild(createAssetCardElement(asset));
       });
     }
 
-    // 4. Historial de Transacciones
     renderTransactions(transactions);
 
   } catch (error) {
@@ -79,10 +73,9 @@ async function loadAndRenderApp(): Promise<void> {
   }
 }
 
-// Tipado estricto con Transaction[] (eliminado el uso de any)
 function renderTransactions(transactions: Transaction[]): void {
   const transactionsContainer = document.getElementById("transactions-list");
-  if (transactionsContainer) {
+  if (transactionsContainer !== null) {
     transactionsContainer.replaceChildren();
     if (transactions.length === 0) {
       const emptyText = document.createElement("p");
@@ -98,7 +91,7 @@ function renderTransactions(transactions: Transaction[]): void {
 
 function showErrorMessage(message: string): void {
   const portfolioContainer = document.getElementById("portfolio-summary");
-  if (portfolioContainer) {
+  if (portfolioContainer !== null) {
     const errorText = document.createElement("p");
     errorText.textContent = message;
     errorText.className = "error-message";
@@ -106,34 +99,33 @@ function showErrorMessage(message: string): void {
   }
 }
 
-// --- SETUP Y VALIDACIÓN DEL FORMULARIO DE TRANSACCIONES ---
 function setupTransactionForm(): void {
   const form = document.getElementById("transaction-form") as HTMLFormElement | null;
   const errorDiv = document.getElementById("form-error") as HTMLDivElement | null;
 
-  if (!form) return;
+  if (form === null) return;
 
   form.addEventListener("submit", async (event: SubmitEvent) => {
-    event.preventDefault(); // Detiene la recarga nativa de la página
+    event.preventDefault();
 
-    if (errorDiv) {
+    if (errorDiv !== null) {
       errorDiv.style.display = "none";
       errorDiv.textContent = "";
     }
 
-    // Aserciones de tipo especializadas
-    const assetSelect = document.getElementById("asset-select") as HTMLSelectElement;
-    const typeSelect = document.getElementById("type-select") as HTMLSelectElement;
-    const quantityInput = document.getElementById("quantity-input") as HTMLInputElement;
-    const priceInput = document.getElementById("price-input") as HTMLInputElement;
+    const assetSelect = document.getElementById("asset-select") as HTMLSelectElement | null;
+    const typeSelect = document.getElementById("type-select") as HTMLSelectElement | null;
+    const quantityInput = document.getElementById("quantity-input") as HTMLInputElement | null;
+    const priceInput = document.getElementById("price-input") as HTMLInputElement | null;
+
+    if (assetSelect === null || typeSelect === null || quantityInput === null || priceInput === null) return;
 
     const assetId = assetSelect.value.trim();
     const type = typeSelect.value as TransactionType;
     const quantity = Number(quantityInput.value);
     const unitPrice = Number(priceInput.value);
 
-    // Validaciones estrictas de presencia y rango
-    if (!assetId) {
+    if (assetId.length === 0) {
       showFormError("Por favor seleccione un activo financiero válido.");
       return;
     }
@@ -167,7 +159,7 @@ function setupTransactionForm(): void {
   });
 
   function showFormError(message: string): void {
-    if (errorDiv) {
+    if (errorDiv !== null) {
       errorDiv.textContent = message;
       errorDiv.style.display = "block";
     }
